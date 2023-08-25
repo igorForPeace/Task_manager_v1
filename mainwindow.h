@@ -7,7 +7,7 @@
 #include "qdynamicbutton.h"
 #include <QSharedPointer>
 #include <QVBoxLayout>
-
+#include <QSystemTrayIcon>
 
 
 QT_BEGIN_NAMESPACE
@@ -43,6 +43,8 @@ private:
     QString path;
     Ui::MainWindow *ui;
     QVBoxLayout* lay;
+    QSystemTrayIcon *trayIcon = nullptr;
+
 protected:
     QVector<QSharedPointer<QDynamicButton>> buttonVector;
 };

@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <algorithm>
 #include "setupnewtask.h"
+#include <QTimer>
 
 
 MainWindow::MainWindow(QString newPath, QWidget *parent)
@@ -37,6 +38,9 @@ void MainWindow::LoadTaskFromFile()
     filters<<"*.txt";
     folderDir.setNameFilters(filters);
 
+    QDateTime currentTime = QDateTime::currentDateTime();
+    QString mostImportantTasks;
+
     QStringList fileList = folderDir.entryList();
     foreach (QString fileName, fileList)
     {
@@ -56,6 +60,12 @@ void MainWindow::LoadTaskFromFile()
             QDateTime finalDate = QDateTime::fromString(tempStrFinalDate, "ddd MMM dd hh:mm:ss yyyy");
             int priority = in.readLine().toInt();
 
+            int differenceInTime = currentTime.secsTo(finalDate);
+            if(differenceInTime<86400 && differenceInTime>0)
+            {
+                mostImportantTasks += name + "\n";
+            }
+
             QStringList descriptionLines;
             while(!in.atEnd())
             {
@@ -72,6 +82,14 @@ void MainWindow::LoadTaskFromFile()
             file.close();
         }
     }
+
+    if(!mostImportantTasks.isEmpty())
+    {
+        trayIcon = new QSystemTrayIcon(QIcon("..\\Task_manager_ex_1\\icon.png"), nullptr);
+        trayIcon->show();
+        trayIcon->showMessage("Most Important tasks: ", mostImportantTasks, QSystemTrayIcon::Information, 5000);
+    }
+
 }
 
 MainWindow::~MainWindow()
@@ -86,6 +104,10 @@ MainWindow::~MainWindow()
         }
     }
     this->SaveTaskToFile();
+    if(trayIcon!=nullptr)
+    {
+        delete trayIcon;
+    }
 }
 
 QString MainWindow::GetPath() const
