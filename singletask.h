@@ -14,12 +14,12 @@ private:
     QString name;
     QString description;
     QDateTime creation_date;
-    QDate final_date;
+    QDateTime final_date;
     Progress status;
     Priority priority;
 
 public:
-    SingleTask(QString name, QString description, QDate final_date, unsigned int priority);
+    SingleTask(QString name, QString description, QDateTime final_date, unsigned int priority);
     QString GetName() const;
     QString GetDescription() const;
     void SetPriority(unsigned int priority);
@@ -29,8 +29,8 @@ public:
     void SetName(const QString& new_name);
     void SetDescription(const QString& new_descr);
     QDateTime GetCreationDate() const;
-    QDate GetFinalDate() const;
-    void SetFinalDate(const QDate& date);
+    QDateTime GetFinalDate() const;
+    void SetFinalDate(const QDateTime& date);
     void SetDateOfCreate(const QDateTime& time);
 };
 

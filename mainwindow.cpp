@@ -53,7 +53,7 @@ void MainWindow::LoadTaskFromFile()
             QString tempStrCreateDateTime = in.readLine();
             QDateTime createDateTime = QDateTime::fromString(tempStrCreateDateTime, "ddd MMM dd hh:mm:ss yyyy");
             QString tempStrFinalDate = in.readLine();
-            QDate finalDate = QDate::fromString(tempStrFinalDate, "ddd MMM d yyyy");
+            QDateTime finalDate = QDateTime::fromString(tempStrFinalDate, "ddd MMM dd hh:mm:ss yyyy");
             int priority = in.readLine().toInt();
 
             QStringList descriptionLines;
@@ -101,7 +101,7 @@ void MainWindow::on_AddNewTaskPushButton_clicked()
     {
         QString name = newTaskWindow->getEnteredName();
         QString descr = newTaskWindow->getEnteredDescription();
-        QDate date = newTaskWindow->getFinalDate();
+        QDateTime date = newTaskWindow->getFinalDate();
         int priority = newTaskWindow->GetPriority();
         QSharedPointer<QDynamicButton> button = QSharedPointer<QDynamicButton>::create(this, name, descr, date, priority);
         buttonVector.push_back(button);

@@ -9,18 +9,18 @@ class QDynamicButton : public QPushButton
 {
     Q_OBJECT
 public:
-    explicit QDynamicButton(QWidget* parent, QString name, QString description, QDate final_date, unsigned int priority);
+    explicit QDynamicButton(QWidget* parent, QString name, QString description, QDateTime final_date, unsigned int priority);
     ~QDynamicButton();
 
     QString GetTaskName() const;
     QString GetTaskDescription() const;
     QDateTime GetTaskCreationDate() const;
-    QDate GetTaskFinalDate() const;
+    QDateTime GetTaskFinalDate() const;
     unsigned int GetPriority() const;
 
     void SetTaskName(const QString& name);
     void SetTaskDescription(const QString& descr);
-    void SetTaskFinalDate(QDate date);
+    void SetTaskFinalDate(QDateTime date);
     void SetTaskCreateDate(const QDateTime& time);
     void SetPriority(int priority);
     void SetImage(const QString& name, int priority);

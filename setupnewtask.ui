@@ -85,16 +85,6 @@
     <string>Final date:</string>
    </property>
   </widget>
-  <widget class="QDateEdit" name="FinalDate">
-   <property name="geometry">
-    <rect>
-     <x>200</x>
-     <y>290</y>
-     <width>110</width>
-     <height>25</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
@@ -144,6 +134,16 @@
    </property>
    <property name="text">
     <string>Cancel</string>
+   </property>
+  </widget>
+  <widget class="QDateTimeEdit" name="FinalDate">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>290</y>
+     <width>194</width>
+     <height>25</height>
+    </rect>
    </property>
   </widget>
  </widget>

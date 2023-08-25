@@ -3,7 +3,7 @@
 #include "singletask.h"
 
 QDynamicButton::QDynamicButton(QWidget* parent, QString name,
-                               QString description, QDate final_date, unsigned int priority)
+                               QString description, QDateTime final_date, unsigned int priority)
     :QPushButton(parent), task(name, description, final_date, priority)
 {
 //    if(priority == 0)
@@ -43,7 +43,7 @@ QDateTime QDynamicButton::GetTaskCreationDate() const
     return this->task.GetCreationDate();
 }
 
-QDate QDynamicButton::GetTaskFinalDate() const
+QDateTime QDynamicButton::GetTaskFinalDate() const
 {
     return this->task.GetFinalDate();
 }
@@ -63,7 +63,7 @@ void QDynamicButton::SetTaskDescription(const QString &descr)
     this->task.SetDescription(descr);
 }
 
-void QDynamicButton::SetTaskFinalDate(QDate date)
+void QDynamicButton::SetTaskFinalDate(QDateTime date)
 {
     this->task.SetFinalDate(date);
 }

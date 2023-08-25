@@ -17,11 +17,11 @@ public:
     ~SetUpNewTask();
     QString getEnteredName() const;
     QString getEnteredDescription() const;
-    QDate getFinalDate() const;
+    QDateTime getFinalDate() const;
     int GetPriority() const;
     void SetNewChangedEnteredName(const QString& newName);
     void SetNewChangedEnderedDescription(const QString& newDescription);
-    void SetNewChangedFinalDate(const QDate& newDate);
+    void SetNewChangedFinalDate(const QDateTime& newDate);
     void SetNewChangedPriority(int index);
 
 private slots:
@@ -36,7 +36,7 @@ private:
     QString newName;
     QString newDescription;
     int priority;
-    QDate finalDate;
+    QDateTime finalDate;
 };
 
 #endif // SETUPNEWTASK_H
