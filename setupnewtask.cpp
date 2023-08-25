@@ -24,7 +24,7 @@ QString SetUpNewTask::getEnteredDescription() const
     return this->newDescription;
 }
 
-QDate SetUpNewTask::getFinalDate() const
+QDateTime SetUpNewTask::getFinalDate() const
 {
     return this->finalDate;
 }
@@ -45,9 +45,9 @@ void SetUpNewTask::SetNewChangedEnderedDescription(const QString &newDescription
     ui->NewDescriptionTextEdit->setText(newDescription);
 }
 
-void SetUpNewTask::SetNewChangedFinalDate(const QDate &newDate)
+void SetUpNewTask::SetNewChangedFinalDate(const QDateTime &newDate)
 {
-    ui->FinalDate->setDate(newDate);
+    ui->FinalDate->setDateTime(newDate);
 }
 
 void SetUpNewTask::SetNewChangedPriority(int index)
@@ -59,9 +59,9 @@ void SetUpNewTask::on_SavePushButton_clicked()
 {
     this->newName = ui->NewNameLineEdit->text();
     this->newDescription = ui->NewDescriptionTextEdit->toPlainText();
-    this->finalDate = ui->FinalDate->date();
+    this->finalDate = ui->FinalDate->dateTime();
 
-    if(finalDate > QDate::currentDate()&&!this->newName.isEmpty()&&!this->newDescription.isEmpty())
+    if(finalDate > QDateTime::currentDateTime()&&!this->newName.isEmpty()&&!this->newDescription.isEmpty())
     {
         this->accept();
     }

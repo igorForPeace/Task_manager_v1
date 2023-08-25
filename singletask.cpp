@@ -1,8 +1,9 @@
 
 #include "singletask.h"
 #include <QDebug>
+#include <QDateTime>
 
-SingleTask::SingleTask(QString name, QString description, QDate final_date, unsigned int priority)
+SingleTask::SingleTask(QString name, QString description, QDateTime final_date, unsigned int priority)
     : name(name), description(description), creation_date(QDateTime::currentDateTime())
 {
     this->final_date = final_date;
@@ -108,12 +109,12 @@ QDateTime SingleTask::GetCreationDate() const
     return this->creation_date;
 }
 
-QDate SingleTask::GetFinalDate() const
+QDateTime SingleTask::GetFinalDate() const
 {
     return this->final_date;
 }
 
-void SingleTask::SetFinalDate(const QDate &date)
+void SingleTask::SetFinalDate(const QDateTime &date)
 {
     this->final_date = date;
 }
