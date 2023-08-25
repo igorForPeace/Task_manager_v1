@@ -29,5 +29,6 @@ int main(int argc, char *argv[])
     //SingleTask s{"task1", "some descr", "20.08.2023", 2};
     //s.ShowDebug();
 
+    qDebug()<<"End the program";
     return a.exec();
 }
