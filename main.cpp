@@ -10,6 +10,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    qDebug()<<"Start the program";
     EnterWindow enterWindow;
     QString accPath;
     if(enterWindow.exec()!=QDialog::Accepted)
