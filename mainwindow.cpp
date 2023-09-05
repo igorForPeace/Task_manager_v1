@@ -8,10 +8,12 @@
 #include <algorithm>
 #include "setupnewtask.h"
 #include <QTimer>
+#include <QSqlQuery>
+#include <QSqlError>
 
 
-MainWindow::MainWindow(QString newPath, QWidget *parent)
-    : QMainWindow(parent), path(newPath)
+MainWindow::MainWindow(int accId, QWidget *parent)
+    : QMainWindow(parent), accId(accId)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -20,45 +22,29 @@ MainWindow::MainWindow(QString newPath, QWidget *parent)
     lay = new QVBoxLayout(this);
     ui->scrollAreaWidgetContents->setLayout(lay);
     lay->setAlignment(Qt::AlignTop);
-    ui->AccLabel->setText(this->path);
-    this->LoadTaskFromFile();
+    //this->LoadTaskFromFile();
+    this->LoadTaskFromDataBase();
 }
 
-void MainWindow::LoadTaskFromFile()
+void MainWindow::LoadTaskFromDataBase()
 {
-    QString folderPath = this->path;
-    QDir folderDir(folderPath);
-    if(!folderDir.exists())
-    {
-        QMessageBox::warning(this, "Error", "Folder doesn't exist");
-        return;
-    }
-
-    QStringList filters;
-    filters<<"*.txt";
-    folderDir.setNameFilters(filters);
-
-    QDateTime currentTime = QDateTime::currentDateTime();
     QString mostImportantTasks;
+    QDateTime currentTime = QDateTime::currentDateTime();
 
-    QStringList fileList = folderDir.entryList();
-    foreach (QString fileName, fileList)
+    QSqlQuery loadQuery;
+    loadQuery.prepare("SELECT name, description, creation_date, final_date, priority, user_id "
+                      "FROM Tasks "
+                      "WHERE user_id = :user_id");
+    loadQuery.bindValue(":user_id", this->accId);
+    if(loadQuery.exec())
     {
-        if(fileName == "Password.txt")
+        while(loadQuery.next())
         {
-            continue;
-        }
-
-        QFile file(folderPath + "\\" + fileName);
-        if(file.open(QIODevice::ReadOnly|QIODevice::Text))
-        {
-            QTextStream in(&file);
-            QString name = in.readLine();
-            QString tempStrCreateDateTime = in.readLine();
-            QDateTime createDateTime = QDateTime::fromString(tempStrCreateDateTime, "ddd MMM dd hh:mm:ss yyyy");
-            QString tempStrFinalDate = in.readLine();
-            QDateTime finalDate = QDateTime::fromString(tempStrFinalDate, "ddd MMM dd hh:mm:ss yyyy");
-            int priority = in.readLine().toInt();
+            QString name = loadQuery.value(0).toString();
+            QString descr = loadQuery.value(1).toString();
+            QDateTime creatDate = loadQuery.value(2).toDateTime();
+            QDateTime finalDate = loadQuery.value(3).toDateTime();
+            int priority = loadQuery.value(4).toInt();
 
             int differenceInTime = currentTime.secsTo(finalDate);
             if(differenceInTime<86400 && differenceInTime>0)
@@ -66,54 +52,120 @@ void MainWindow::LoadTaskFromFile()
                 mostImportantTasks += name + "\n";
             }
 
-            QStringList descriptionLines;
-            while(!in.atEnd())
-            {
-                descriptionLines.append(in.readLine());
-            }
-
-            QString description = descriptionLines.join("\n");
-
-            QSharedPointer<QDynamicButton> button = QSharedPointer<QDynamicButton>::create(this, name, description, finalDate, priority);
-            button->SetTaskCreateDate(createDateTime);
+            QSharedPointer<QDynamicButton> button = QSharedPointer<QDynamicButton>::create(this, name, descr, finalDate, priority);
+            button->SetTaskCreateDate(creatDate);
             buttonVector.push_back(button);
             lay->addWidget(button.data(),0, Qt::AlignmentFlag::AlignTop);
             connect(button.data(), SIGNAL(clicked()), this, SLOT(slotGetNameDescription()));
-            file.close();
         }
     }
-
+    else
+    {
+        QMessageBox::warning(this, "Error", loadQuery.lastError().text());
+    }
     if(!mostImportantTasks.isEmpty())
     {
         trayIcon = new QSystemTrayIcon(QIcon("..\\Task_manager_ex_1\\icon.png"), nullptr);
         trayIcon->show();
         trayIcon->showMessage("Most Important tasks: ", mostImportantTasks, QSystemTrayIcon::Information, 5000);
     }
-
 }
+
+//void MainWindow::LoadTaskFromFile()
+//{
+//    QString folderPath = this->path;
+//    QDir folderDir(folderPath);
+//    if(!folderDir.exists())
+//    {
+//        QMessageBox::warning(this, "Error", "Folder doesn't exist");
+//        return;
+//    }
+
+//    QStringList filters;
+//    filters<<"*.txt";
+//    folderDir.setNameFilters(filters);
+
+//    QDateTime currentTime = QDateTime::currentDateTime();
+//    QString mostImportantTasks;
+
+//    QStringList fileList = folderDir.entryList();
+//    foreach (QString fileName, fileList)
+//    {
+//        if(fileName == "Password.txt")
+//        {
+//            continue;
+//        }
+
+//        QFile file(folderPath + "\\" + fileName);
+//        if(file.open(QIODevice::ReadOnly|QIODevice::Text))
+//        {
+//            QTextStream in(&file);
+//            QString name = in.readLine();
+//            QString tempStrCreateDateTime = in.readLine();
+//            QDateTime createDateTime = QDateTime::fromString(tempStrCreateDateTime, "ddd MMM dd hh:mm:ss yyyy");
+//            QString tempStrFinalDate = in.readLine();
+//            QDateTime finalDate = QDateTime::fromString(tempStrFinalDate, "ddd MMM dd hh:mm:ss yyyy");
+//            int priority = in.readLine().toInt();
+
+//            int differenceInTime = currentTime.secsTo(finalDate);
+//            if(differenceInTime<86400 && differenceInTime>0)
+//            {
+//                mostImportantTasks += name + "\n";
+//            }
+
+//            QStringList descriptionLines;
+//            while(!in.atEnd())
+//            {
+//                descriptionLines.append(in.readLine());
+//            }
+
+//            QString description = descriptionLines.join("\n");
+
+//            QSharedPointer<QDynamicButton> button = QSharedPointer<QDynamicButton>::create(this, name, description, finalDate, priority);
+//            button->SetTaskCreateDate(createDateTime);
+//            buttonVector.push_back(button);
+//            lay->addWidget(button.data(),0, Qt::AlignmentFlag::AlignTop);
+//            connect(button.data(), SIGNAL(clicked()), this, SLOT(slotGetNameDescription()));
+//            file.close();
+//        }
+//    }
+
+//    if(!mostImportantTasks.isEmpty())
+//    {
+//        trayIcon = new QSystemTrayIcon(QIcon("..\\Task_manager_ex_1\\icon.png"), nullptr);
+//        trayIcon->show();
+//        trayIcon->showMessage("Most Important tasks: ", mostImportantTasks, QSystemTrayIcon::Information, 5000);
+//    }
+
+//}
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    QStringList fileList = QDir(this->path).entryList(QStringList()<<"*.txt");
-    foreach (QString fileName, fileList)
-    {
-        if(fileName!="Password.txt")
-        {
-            QFile::remove(this->path + "\\" + fileName);
-        }
-    }
-    this->SaveTaskToFile();
-    if(trayIcon!=nullptr)
-    {
-        delete trayIcon;
-    }
+//    QStringList fileList = QDir(this->path).entryList(QStringList()<<"*.txt");
+//    foreach (QString fileName, fileList)
+//    {
+//        if(fileName!="Password.txt")
+//        {
+//            QFile::remove(this->path + "\\" + fileName);
+//        }
+//    }
+//    this->SaveTaskToFile();
+//    if(trayIcon!=nullptr)
+//    {
+//        delete trayIcon;
+    //    }
 }
 
-QString MainWindow::GetPath() const
+int MainWindow::GetAccId() const
 {
-    return this->path;
+    return this->accId;
 }
+
+//QString MainWindow::GetPath() const
+//{
+//    return this->path;
+//}
 
 void MainWindow::on_AddNewTaskPushButton_clicked()
 {
@@ -125,10 +177,29 @@ void MainWindow::on_AddNewTaskPushButton_clicked()
         QString descr = newTaskWindow->getEnteredDescription();
         QDateTime date = newTaskWindow->getFinalDate();
         int priority = newTaskWindow->GetPriority();
-        QSharedPointer<QDynamicButton> button = QSharedPointer<QDynamicButton>::create(this, name, descr, date, priority);
-        buttonVector.push_back(button);
-        lay->addWidget(button.data(),0, Qt::AlignmentFlag::AlignTop);
-        connect(button.data(), SIGNAL(clicked()), this, SLOT(slotGetNameDescription()));
+
+        QSqlQuery insertQuery;
+        insertQuery.prepare("INSERT INTO Tasks (name, description, creation_date, final_date, priority, user_id) "
+                            "VALUES (:name, :description, :creation_date, :final_date, :priority, :user_id)");
+
+        insertQuery.bindValue(":name", name);
+        insertQuery.bindValue(":description", descr);
+        insertQuery.bindValue(":creation_date", QDateTime::currentDateTime());
+        insertQuery.bindValue(":final_date", date);
+        insertQuery.bindValue(":priority", priority);
+        insertQuery.bindValue(":user_id", this->GetAccId());
+        if(insertQuery.exec())
+        {
+            QSharedPointer<QDynamicButton> button = QSharedPointer<QDynamicButton>::create(this, name, descr, date, priority);
+            buttonVector.push_back(button);
+            lay->addWidget(button.data(),0, Qt::AlignmentFlag::AlignTop);
+            connect(button.data(), SIGNAL(clicked()), this, SLOT(slotGetNameDescription()));
+        }
+        else
+        {
+            QMessageBox::warning(this, "Error", insertQuery.lastError().text());
+        }
+
     }
     delete newTaskWindow;
 }
@@ -267,23 +338,25 @@ void MainWindow::on_searchLineEdit_textEdited(const QString &arg1)
     }
 }
 
-void MainWindow::SaveTaskToFile()
-{
-    for(int i = 0 ; i < buttonVector.size();++i)
-    {
-        QFile file(this->path + "\\" + buttonVector[i]->GetTaskName() + ".txt");
-        if(file.open(QIODevice::WriteOnly | QIODevice::Text))
-        {
-            QTextStream out(&file);
-            out<<buttonVector[i]->GetTaskName() + "\n";
-            out<<buttonVector[i]->GetTaskCreationDate().toString() + "\n";
-            out<<buttonVector[i]->GetTaskFinalDate().toString() + "\n";
-            out<<QString::number(buttonVector[i]->GetPriority()) + "\n";
-            out<<buttonVector[i]->GetTaskDescription() + "\n";
-            file.close();
-        }
-    }
-}
+
+
+//void MainWindow::SaveTaskToFile()
+//{
+//    for(int i = 0 ; i < buttonVector.size();++i)
+//    {
+//        QFile file(this->path + "\\" + buttonVector[i]->GetTaskName() + ".txt");
+//        if(file.open(QIODevice::WriteOnly | QIODevice::Text))
+//        {
+//            QTextStream out(&file);
+//            out<<buttonVector[i]->GetTaskName() + "\n";
+//            out<<buttonVector[i]->GetTaskCreationDate().toString() + "\n";
+//            out<<buttonVector[i]->GetTaskFinalDate().toString() + "\n";
+//            out<<QString::number(buttonVector[i]->GetPriority()) + "\n";
+//            out<<buttonVector[i]->GetTaskDescription() + "\n";
+//            file.close();
+//        }
+//    }
+//}
 
 
 

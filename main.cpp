@@ -4,6 +4,9 @@
 #include <QApplication>
 #include <QDate>
 #include <QDebug>
+#include <QSqlDatabase>
+#include <QSqlError>
+
 
 
 //adding sql features
@@ -11,23 +14,37 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     qDebug()<<"Start the program";
-    EnterWindow enterWindow;
-    QString accPath;
-    if(enterWindow.exec()!=QDialog::Accepted)
+    QSqlDatabase db = QSqlDatabase::addDatabase("QODBC");
+    db.setDatabaseName("DRIVER={SQL Server};SERVER=DESKTOP-JACI7RM;DATABASE=Task_manager_ex_1");
+    db.setUserName("testIhor");
+    db.setPassword("12345");
+    int accId{};
+    if(!db.open())
     {
-        return 0;
+        qDebug()<<db.lastError().text();
     }
     else
     {
-        accPath = enterWindow.GetPath();
-    }
-    qDebug()<<accPath;
+        qDebug()<<"db is opened";
+        EnterWindow enterWindow;
+        //QString accPath;
 
-    MainWindow w(accPath);
+        if(enterWindow.exec()!=QDialog::Accepted)
+        {
+            return 0;
+        }
+        else
+        {
+            //accPath = enterWindow.GetPath();
+            accId = enterWindow.GetAccId();
+        }
+        qDebug()<<accId;
+
+    }
+
+    MainWindow w(accId);
     w.show();
 
-    //SingleTask s{"task1", "some descr", "20.08.2023", 2};
-    //s.ShowDebug();
 
     qDebug()<<"End the program";
     return a.exec();

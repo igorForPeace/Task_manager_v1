@@ -14,7 +14,10 @@ class EnterWindow : public QDialog
 public:
     explicit EnterWindow(QWidget *parent = nullptr);
     ~EnterWindow();
-    QString GetPath() const;
+
+    int GetAccId() const;
+
+    //QString GetPath() const;
 
 private slots:
     void on_EnterPushButton_clicked();
@@ -25,7 +28,10 @@ private slots:
 
 private:
     Ui::EnterWindow *ui;
-    QString accPath;
+
+    int accId;
+    //QString accPath;
+
 };
 
 #endif // ENTERWINDOW_H

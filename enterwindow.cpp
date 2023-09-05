@@ -1,9 +1,11 @@
 #include "enterwindow.h"
 #include "ui_enterwindow.h"
 #include <QMessageBox>
-#include <QDir>
-#include <QFile>
+//#include <QDir>
+//#include <QFile>
 #include "registrationwindow.h"
+#include <QSqlQuery>
+#include <QSqlError>
 
 EnterWindow::EnterWindow(QWidget *parent) :
     QDialog(parent),
@@ -18,10 +20,15 @@ EnterWindow::~EnterWindow()
     delete ui;
 }
 
-QString EnterWindow::GetPath() const
+int EnterWindow::GetAccId() const
 {
-    return this->accPath;
+    return this->accId;
 }
+
+//QString EnterWindow::GetPath() const
+//{
+//    return this->accPath;
+//}
 
 void EnterWindow::on_EnterPushButton_clicked()
 {
@@ -33,40 +40,68 @@ void EnterWindow::on_EnterPushButton_clicked()
         return;
     }
 
-    QString path = "..\\Task_manager_ex_1\\" + log;
-    QDir folder;
-    if(folder.exists(path))
+    QSqlQuery query;
+    query.prepare("SELECT id FROM Users WHERE login = :login "
+                  "AND password = :password");
+    query.bindValue(":login", log);
+    query.bindValue(":password", password);
+
+    if(query.exec())
     {
-        QFile file(path + "\\Password.txt");
-        if(file.open(QIODevice::ReadOnly|QIODevice::Text))
+        if(query.next())
         {
-            QTextStream stream(&file);
-            QString finalPassword = stream.readAll();
-            file.close();
-            if(finalPassword==password)
-            {
-                QMessageBox::information(this, "Access", "Entering the acc " + log);
-                this->accPath = path;
-                this->accept();
-            }
-            else
-            {
-                QMessageBox::warning(this,"Error", "Wrong password!");
-                ui->pasLineEdit->clear();
-                return;
-            }
+            QMessageBox::information(this, "Access", "Entering the acc " + log);
+            this->accId = query.value(0).toInt();
+            this->accept();
         }
         else
         {
-            QMessageBox::warning(this,"Error", "Cannot open password.txt");
+            QMessageBox::warning(this,"Error", "Acc doesn't create or wrong password!");
+            ui->logLineEdit->clear();
+            ui->pasLineEdit->clear();
         }
     }
     else
     {
-        QMessageBox::warning(this,"Error", "Acc doesn't create!");
-        ui->logLineEdit->clear();
-        ui->pasLineEdit->clear();
+        qDebug()<<"Error: "<<query.lastError().text();
     }
+
+
+
+//    QString path = "..\\Task_manager_ex_1\\" + log;
+//    QDir folder;
+//    if(folder.exists(path))
+//    {
+//        QFile file(path + "\\Password.txt");
+//        if(file.open(QIODevice::ReadOnly|QIODevice::Text))
+//        {
+//            QTextStream stream(&file);
+//            QString finalPassword = stream.readAll();
+//            file.close();
+//            if(finalPassword==password)
+//            {
+//                QMessageBox::information(this, "Access", "Entering the acc " + log);
+//                this->accPath = path;
+//                this->accept();
+//            }
+//            else
+//            {
+//                QMessageBox::warning(this,"Error", "Wrong password!");
+//                ui->pasLineEdit->clear();
+//                return;
+//            }
+//        }
+//        else
+//        {
+//            QMessageBox::warning(this,"Error", "Cannot open password.txt");
+//        }
+//    }
+//    else
+//    {
+//        QMessageBox::warning(this,"Error", "Acc doesn't create!");
+//        ui->logLineEdit->clear();
+//        ui->pasLineEdit->clear();
+//    }
 }
 
 

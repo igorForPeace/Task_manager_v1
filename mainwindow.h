@@ -20,9 +20,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QString newPath, QWidget *parent = nullptr);
+    MainWindow(int accId, QWidget *parent = nullptr);
     ~MainWindow();
-    QString GetPath() const;
+    //QString GetPath() const;
+
+    int GetAccId() const;
 
 private slots:
     void on_AddNewTaskPushButton_clicked();
@@ -40,7 +42,9 @@ private slots:
 private:
     void SaveTaskToFile();
     void LoadTaskFromFile();
-    QString path;
+    void LoadTaskFromDataBase();
+    //QString path;
+    int accId;
     Ui::MainWindow *ui;
     QVBoxLayout* lay;
     QSystemTrayIcon *trayIcon = nullptr;
