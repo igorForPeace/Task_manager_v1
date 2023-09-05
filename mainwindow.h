@@ -22,8 +22,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(int accId, QWidget *parent = nullptr);
     ~MainWindow();
-    //QString GetPath() const;
-
     int GetAccId() const;
 
 private slots:
@@ -43,7 +41,6 @@ private:
     void SaveTaskToFile();
     void LoadTaskFromFile();
     void LoadTaskFromDataBase();
-    //QString path;
     int accId;
     Ui::MainWindow *ui;
     QVBoxLayout* lay;

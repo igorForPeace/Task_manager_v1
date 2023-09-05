@@ -17,8 +17,6 @@ public:
 
     int GetAccId() const;
 
-    //QString GetPath() const;
-
 private slots:
     void on_EnterPushButton_clicked();
 
@@ -30,8 +28,6 @@ private:
     Ui::EnterWindow *ui;
 
     int accId;
-    //QString accPath;
-
 };
 
 #endif // ENTERWINDOW_H

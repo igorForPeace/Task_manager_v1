@@ -6,20 +6,6 @@ QDynamicButton::QDynamicButton(QWidget* parent, QString name,
                                QString description, QDateTime final_date, unsigned int priority)
     :QPushButton(parent), task(name, description, final_date, priority)
 {
-//    if(priority == 0)
-//    {
-//        this->setStyleSheet("background-color: #ADFF2F; font-weight: bold");
-//    }
-//    else if(priority == 1)
-//    {
-//        this->setStyleSheet("background-color: yellow;font-weight: bold");
-//    }
-//    else
-//    {
-//        this->setStyleSheet("background-color: #f23a0c;font-weight: bold");
-//    }
-//    this->setText("name: " + name);
-
     this->SetImage(name, priority);
 }
 

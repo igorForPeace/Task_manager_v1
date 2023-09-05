@@ -7,8 +7,6 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 
-
-
 //adding sql features
 int main(int argc, char *argv[])
 {
@@ -27,7 +25,6 @@ int main(int argc, char *argv[])
     {
         qDebug()<<"db is opened";
         EnterWindow enterWindow;
-        //QString accPath;
 
         if(enterWindow.exec()!=QDialog::Accepted)
         {

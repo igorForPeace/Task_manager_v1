@@ -3,8 +3,6 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlError>
-//#include <QFile>
-//#include <QDir>
 
 RegistrationWindow::RegistrationWindow(QWidget *parent) :
     QDialog(parent),
@@ -22,8 +20,6 @@ RegistrationWindow::~RegistrationWindow()
 
 void RegistrationWindow::on_MakeRegPushButton_clicked()
 {
-    //QString path = "..\\Task_manager_ex_1\\" + ui->LoginLineEdit->text();
-
     QString newLogin = ui->LoginLineEdit->text();
     QString password1 = ui->PassworOneLineEdit->text();
     QString password2 = ui->PasswordTwoLineEdit->text();
@@ -65,54 +61,6 @@ void RegistrationWindow::on_MakeRegPushButton_clicked()
             qDebug()<<"Inserting error: "<<insertQuery.lastError();
         }
     }
-
-//    if(ui->LoginLineEdit->text().isEmpty()||password1.isEmpty()||password2.isEmpty())
-//    {
-//        QMessageBox::warning(this,"Eror","You have to fill all lines!");
-//        return;
-//    }
-//    if(password1!=password2)
-//    {
-//        QMessageBox::warning(this, "Error", "Password must be the same!");
-//        return;
-//    }
-//    QDir newFolder;
-//    if(!newFolder.exists(path))
-//    {
-//        if(newFolder.mkdir(path))
-//        {
-//            QString filePath = path + "\\Password.txt";
-//            QFile file(filePath);
-//            if(file.open(QIODevice::WriteOnly|QIODevice::Text))
-//            {
-//                QTextStream stream(&file);
-//                stream<<password1;
-//                file.close();
-//                QMessageBox::information(this, "Info", "We create acc");
-//                this->close();
-//            }
-//            else
-//            {
-//                if(newFolder.rmdir(path))
-//                {
-//                    QMessageBox::warning(this, "Error", "Cannot create password file. Folder delet");
-//                }
-//                else
-//                {
-//                    QMessageBox::warning(this, "Error", "Cannot create password file. Folder are not delet");
-//                }
-//            }
-
-//        }
-//        else
-//        {
-//            QMessageBox::warning(this, "Error", "Cannot create this acc");
-//        }
-//    }
-//    else
-//    {
-//        QMessageBox::warning(this, "Error", "We already have this accaunt");
-//    }
 }
 
 
